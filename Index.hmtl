@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Mój Własny Powiadamiacz</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e6ecf0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 320px; }
+        h1 { color: #0088cc; font-size: 20px; margin-bottom: 20px; }
+        button { background-color: #0088cc; color: white; border: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s, background 0.2s; width: 100%; }
+        button:hover { background-color: #0077b5; transform: scale(1.02); }
+        button:active { transform: scale(0.98); }
+        #status { margin-top: 15px; font-size: 14px; color: #555; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Telegram Messenger</h1>
+    <p>Kliknij przycisk, aby wysłać "Hej" na swój telefon!</p>
+    
+    <button onclick="wyslijWiadomosc()">WYŚLIJ: HEJ 👋</button>
+    
+    <div id="status"></div>
+</div>
+
+<script>
+    // Twoje dane, które już znamy
+    const TOKEN = "8769056622:AAFDhKBIAWiy_DxBphprXPKzrXhEWFWEn9Y";
+    const CHAT_ID = "5934645630";
+
+    async function wyslijWiadomosc() {
+        const statusDiv = document.getElementById('status');
+        statusDiv.innerText = "Wysyłanie...";
+        statusDiv.style.color = "#555";
+
+        const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: "Hej! To wiadomość z Twojego własnego skryptu HTML! 🚀"
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.ok) {
+                statusDiv.innerText = "✅ Wysłano pomyślnie!";
+                statusDiv.style.color = "green";
+            } else {
+                statusDiv.innerText = "❌ Błąd: " + data.description;
+                statusDiv.style.color = "red";
+            }
+        } catch (error) {
+            statusDiv.innerText = "❌ Błąd połączenia.";
+            statusDiv.style.color = "red";
+        }
+    }
+</script>
+
+</body>
+</html>
